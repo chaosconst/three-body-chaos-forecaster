@@ -56,4 +56,4 @@ python3 -m venv .venv && .venv/bin/pip install rebound numpy torch
 
 ## Team
 
-Xingyuan Yuan (launch lead), scyangit (builder), Claude Fable 5.1 via Claude Code (co-scientist: literature check, code, experiments, and the page).
+Xingyuan Yuan (launch lead), Shicong Yang (builder), Claude Fable 5.1 via Claude Code (co-scientist: literature check, code, experiments, and the page).
