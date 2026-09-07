@@ -40,10 +40,24 @@ What we learned, in order:
 4. **Longer training overfits, width does not matter.** Per-epoch test AUC peaks at epoch 10–40 for both 128- and 384-wide models on both dataset sizes (≈0.77–0.78 / 0.78–0.80 / 0.72), when the training loss reaches ≈0.38, then decays as the loss keeps falling. More data only slows the decay. The label noise is intrinsic: chaotic decision boundaries are fractal.
 5. **Paying 10 % of the integration cost buys the next 0.05 of AUC.**
 
+## Round 2: proper protocol, stronger models (AUC on a 14 500-system test set, ±0.005)
+
+133 500 training systems, 5 000 validation systems used only for early stopping, test set never used for selection.
+
+| model | diverge | escape | collision |
+|---|---|---|---|
+| logistic regression | 0.761 | 0.738 | 0.706 |
+| gradient-boosted trees (val-tuned) | 0.787 | 0.788 | 0.704 |
+| MLP, early-stopped on validation (page model) | 0.796 | 0.797 | 0.711 |
+| MLP, 5-seed ensemble | 0.799 | 0.801 | 0.713 |
+| MLP + ordinal t_div heads, 5-seed ensemble | 0.799 | 0.801 | 0.715 |
+
+Early stopping on a validation set (all seeds stop at epoch 12–19) is the single largest gain. Trees, ensembles, and richer supervision each add ≤ 0.003. The zero-cost ceiling is 0.80 / 0.80 / 0.71.
+
 ## Honest caveats
 
 - The 1 500-system test set was used to compare model variants, so the page model carries a small selection bias; the fresh 3 000-system numbers are the ones to quote.
-- No validation split was used for early stopping in the first round; the per-epoch curves above show it matters.
+- Round 1 had no validation split for early stopping; round 2 fixes that and is the one to quote.
 - Labels are finite-time, thresholded outcomes, not dynamical stability in the strict sense.
 
 ## Reproduce
