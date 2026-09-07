@@ -16,7 +16,7 @@ The reference answer costs a full IAS15 integration plus a shadow run, about 150
 
 ## What we built
 
-- `scripts/gen3d.py` — dataset generator. REBOUND IAS15, G = 1, masses U(0.5, 1.5), positions uniform in the unit sphere, isotropic velocities scaled to virial ratio U(0.1, 0.5), integrated to t = 30. Every run has a shadow run with a 1e-10 perturbation, giving a per-system predictability horizon `t_div`. 150 000 systems generated in total.
+- `scripts/gen3d.py` — dataset generator. REBOUND IAS15, G = 1, masses U(0.5, 1.5), positions uniform in the unit sphere, isotropic velocities scaled to virial ratio U(0.1, 0.5), integrated to t = 30. Every run has a shadow run with a 1e-10 perturbation, giving a per-system predictability horizon `t_div`. 153 000 systems generated in total.
 - `scripts/train_chaos.py` — the forecaster: 38 physics + raw features → MLP (3 hidden layers) → 3 logits, trained with exact SO(3) rotation and body-permutation augmentation. Includes logistic-regression and single-feature rule baselines.
 - `scripts/train_short.py` — SPOCK-style variant: integrate to t = 3 first (10 % of the cost), then forecast.
 - `scripts/train_corr.py` — a first attempt (leapfrog + correction network) that failed; kept as a record.
@@ -36,8 +36,8 @@ What we learned, in order:
 
 1. **Zero initial velocity is not a 3D problem.** Three points share a plane; with no velocity the motion never leaves it.
 2. **A one-step correction network does not work here.** The median closest approach is 0.05, so a binary completes two orbits inside one output step. The network added noise to 93 % of steps.
-3. **More data does not move the zero-cost ceiling.** Same test set, training set grown 2 000 → 48 500: AUC flat at 0.76–0.77.
-4. **Bigger or longer training overfits, not because of width.** Per-epoch test AUC peaks at epoch 10–20 for both 128- and 384-wide models (≈0.77/0.78/0.72), exactly when the training loss reaches ≈0.38, then decays as the loss keeps falling. The label noise is intrinsic: chaotic decision boundaries are fractal.
+3. **More data does not move the zero-cost ceiling.** Same test set, training set grown 2 000 → 48 500 → 148 500: peak AUC 0.77–0.78 throughout (+0.005 for 3× data, inside test-set noise).
+4. **Longer training overfits, width does not matter.** Per-epoch test AUC peaks at epoch 10–40 for both 128- and 384-wide models on both dataset sizes (≈0.77–0.78 / 0.78–0.80 / 0.72), when the training loss reaches ≈0.38, then decays as the loss keeps falling. More data only slows the decay. The label noise is intrinsic: chaotic decision boundaries are fractal.
 5. **Paying 10 % of the integration cost buys the next 0.05 of AUC.**
 
 ## Honest caveats
