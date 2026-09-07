@@ -1,0 +1,8 @@
+.venv/
+data/*.npz
+data/*.log
+data/NVM/.git/
+__pycache__/
+*.pt
+data/NVM/
+data/sjtu_liao_three_body/
